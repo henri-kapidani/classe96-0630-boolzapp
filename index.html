@@ -7,10 +7,11 @@
 	<title>Boolzapp</title>
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 	<link rel="stylesheet" href="style.css">
+	<style>[v-cloak] {display: none;}</style>
 </head>
 <body>
 
-	<div class="app container light">
+	<div class="app container light" v-cloak>
 		<div class="content">
 
 			<div class="side">
@@ -32,7 +33,12 @@
 						</div>
 					</div>
 					<ul class="contact-list">
-						<li v-for="contact in contacts" class="contact">
+						<li
+							v-for="(contact, i) in contacts"
+							class="contact"
+							:class="{active: i == activeIndex}"
+							@click="setActiveIndex(contact)"
+						>
 							<img class="avatar" :src="contact.avatar" :alt="contact.name">
 							<div class="info">
 								<div class="name">{{ contact.name }}</div>
@@ -51,8 +57,8 @@
 				<div class="contact">
 					<img class="avatar" :src="contacts[activeIndex].avatar" alt="">
 					<div class="info">
-						<div class="name">Pinco Pallino Pinco Pallino Pinco Pallino Pinco Pallino Pinco Pallino Pinco Pallino Pinco Pallino Pinco Pallino</div>
-						<div class="last-access">Ultimo accesso oggi alle 10/01/2020 16:15:22</div>
+						<div class="name">{{ contacts[activeIndex].name }}</div>
+						<div class="last-access">Ultimo accesso TODO</div>
 					</div>
 					<i class="fas fa-search btn"></i>
 					<i class="fas fa-paperclip btn"></i>
@@ -60,11 +66,15 @@
 				</div>
 
 				<div class="messages">
-					<div v-for="message in contacts[activeIndex].messages" class="message sent">
+					<div
+						v-for="objMessage in contacts[activeIndex].messages"
+						class="message"
+						:class="objMessage.status == 'sent' ? 'sent' : 'received'"
+					>
 						<div class="text">
-							Lorem ipsum dolor sit, amet consectetur adipisicing elit. Nemo non expedita ullam natus fugiat consequatur laborum ut? Vitae molestiae voluptas laborum repellat provident perferendis cum omnis neque vel, magnam quis.
+							{{ objMessage.message }}
 						</div>
-						<div class="date">10/01/2020 15:30:55</div>
+						<div class="date">{{ extractTimeFromDate(objMessage.date) }}</div>
 					</div>
 				</div>
 
@@ -79,6 +89,7 @@
 	</div>
 
 	<script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/luxon@3.3.0/build/global/luxon.min.js"></script>
 	<script src="script.js"></script>
 </body>
 </html>

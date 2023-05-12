@@ -1,6 +1,7 @@
 const app = Vue.createApp({
 	data() {
 		return {
+			activeIndex: 0,
 			contacts: [
 				{
 					name: 'Michele',
@@ -48,7 +49,7 @@ const app = Vue.createApp({
 							date: '20/03/2020 16:35:00',
 							message: 'Mi piacerebbe ma devo andare a fare la spesa.',
 							status: 'sent'
-						}
+						},
 					],
 				},
 				{
@@ -169,7 +170,6 @@ const app = Vue.createApp({
 					],
 				}
 			],
-			activeIndex: 0,
 		};
 	},
 	methods: {
@@ -177,15 +177,25 @@ const app = Vue.createApp({
 			const filteredArray = [];
 			// const filteredArray = .filter()
 			return filteredArray;
-		}
+		},
+		extractTimeFromDate(date) {
+			return date.split(' ')[1].slice(0, -3);
+		},
+		setActiveIndex(element) {
+			this.activeIndex = this.contacts.indexOf(element);
+
+		},
 	},
 	computed: {
 		filteredContacts() {
-			const filteredArray = [];
-			// const filteredArray = .filter()
-			return filteredArray;
-		}
-	}
+			// return this.contacts.filter(contact => ........);
+			return []; // TODO: sostituirlo con il valore corretto
+		},
+	},
 });
 
 app.mount('.app');
+
+
+
+// luxon.DateTime.now().toFormat('dd/MM/yyyy HH:mm:ss')
