@@ -2,6 +2,8 @@ const app = Vue.createApp({
 	data() {
 		return {
 			activeIndex: 0,
+			newMessage: '',
+			searchStr: '',
 			contacts: [
 				{
 					name: 'Michele',
@@ -170,6 +172,12 @@ const app = Vue.createApp({
 					],
 				}
 			],
+			arrReplies: [
+				'Non so',
+				'OK',
+				'Ci si vede',
+				'Non mi disturbare più',
+			],
 		};
 	},
 	methods: {
@@ -183,19 +191,45 @@ const app = Vue.createApp({
 		},
 		setActiveIndex(element) {
 			this.activeIndex = this.contacts.indexOf(element);
-
 		},
+		sendUserMessage() {
+			const contact = this.contacts[this.activeIndex];
+			this.sendMessage(this.newMessage, 'sent', contact);
+			this.newMessage = '';
+			setTimeout(
+				() => this.sendMessage(
+					this.arrReplies[this.getRandomInt(0, this.arrReplies.length - 1)],
+					'received',
+					contact
+				),
+				1000
+				// this.getRandomInt(1, 5) * 1000
+			);
+		},
+		sendMessage(message, status, contact) {
+			const objNewMessage = {
+				date: this.getFormattedNow(),
+				message: message,
+				status: status,
+			};
+			contact.messages.push(objNewMessage);
+		},
+		deleteMessage(index) {
+			this.contacts[this.activeIndex].messages.splice(index, 1);
+		},
+		getFormattedNow() {
+			return luxon.DateTime.now().toFormat('dd/MM/yyyy HH:mm:ss')
+		},
+		getRandomInt(min, max) {
+			return Math.floor(Math.random() * (max - min + 1) ) + min;
+		}
 	},
 	computed: {
 		filteredContacts() {
-			// return this.contacts.filter(contact => ........);
-			return []; // TODO: sostituirlo con il valore corretto
+			// filtrare l'array dei contatti
+			return this.contacts.filter(contact => contact.name.includes(this.searchStr));
 		},
 	},
 });
 
 app.mount('.app');
-
-
-
-// luxon.DateTime.now().toFormat('dd/MM/yyyy HH:mm:ss')

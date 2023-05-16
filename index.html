@@ -29,24 +29,28 @@
 					<div class="search">
 						<div class="input-group">
 							<i class="fa fa-search icon" aria-hidden="true"></i>
-							<input type="text" class="input-search"  placeholder="Cerca o inizia una nuova chat">
+							<input
+								type="text"
+								class="input-search"
+								v-model="searchStr"
+								placeholder="Cerca o inizia una nuova chat">
 						</div>
 					</div>
 					<ul class="contact-list">
 						<li
-							v-for="(contact, i) in contacts"
+							v-for="(contact, i) in filteredContacts"
 							class="contact"
-							:class="{active: i == activeIndex}"
+							:class="{active: contact == contacts[activeIndex]}"
 							@click="setActiveIndex(contact)"
 						>
 							<img class="avatar" :src="contact.avatar" :alt="contact.name">
 							<div class="info">
 								<div class="name">{{ contact.name }}</div>
 								<div class="last-message">
-									Last message here
+									{{ contact.messages.length ? contact.messages[contact.messages.length - 1].message : 'CHAT IS EMPTY' }}
 								</div>
 							</div>
-							<div class="last-date">5/10/2022</div>
+							<div class="last-date">{{ contact.messages.length ? contact.messages[contact.messages.length - 1].date : ''}}</div>
 						</li>
 					</ul>
 				</div>
@@ -58,7 +62,7 @@
 					<img class="avatar" :src="contacts[activeIndex].avatar" alt="">
 					<div class="info">
 						<div class="name">{{ contacts[activeIndex].name }}</div>
-						<div class="last-access">Ultimo accesso TODO</div>
+						<div class="last-access">{{ contacts[activeIndex].messages.length ? 'Ultimo accesso ' + contacts[activeIndex].messages[contacts[activeIndex].messages.length - 1].date : ''}}</div>
 					</div>
 					<i class="fas fa-search btn"></i>
 					<i class="fas fa-paperclip btn"></i>
@@ -67,12 +71,13 @@
 
 				<div class="messages">
 					<div
-						v-for="objMessage in contacts[activeIndex].messages"
+						v-for="(objMessage, i) in contacts[activeIndex].messages"
 						class="message"
 						:class="objMessage.status == 'sent' ? 'sent' : 'received'"
 					>
 						<div class="text">
 							{{ objMessage.message }}
+							<button @click="deleteMessage(i)">Delete</button>
 						</div>
 						<div class="date">{{ extractTimeFromDate(objMessage.date) }}</div>
 					</div>
@@ -80,7 +85,13 @@
 
 				<div class="add-message">
 					<i class="far fa-smile btn"></i>
-					<input type="text" class="message-text" placeholder="Scrivi un messaggio">
+					<input
+						type="text"
+						class="message-text"
+						placeholder="Scrivi un messaggio"
+						v-model="newMessage"
+						@keyup.enter="sendUserMessage()"
+					>
 					<i class="fa fa-microphone btn"></i>
 				</div>
 			</div>
